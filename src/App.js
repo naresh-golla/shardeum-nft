@@ -8,6 +8,7 @@ import { Input } from './components/Input';
 import contractAbi from "./utils/contractAbi.json"
 
 import polygonLogo from './assets/polygonlogo.png';
+import shardeumLogo from './assets/Layer_3.svg';
 import ethLogo from './assets/ethlogo.png';
 import { networks } from './utils/networks';
 import Confetti from "./components/Confetti"
@@ -101,7 +102,8 @@ const App = () => {
 
   const notConnectedBlock = ()=>(
     <div className="connect-wallet-container">
-      <img height="300" src="https://miro.medium.com/max/1000/1*r9qPeukYyZSvr6Tsn6qvcQ.gif" />
+      {/* <img height="300" src="https://miro.medium.com/max/1000/1*r9qPeukYyZSvr6Tsn6qvcQ.gif" /> */}
+      <img height="300" src={shardeumLogo} />
       <button className="cta-button connect-wallet-button" onClick={connectWallet}>
         Connect Wallet
       </button>
@@ -304,44 +306,37 @@ const App = () => {
   }
 
   const fetchMints = async () => {
-    if (ethereum) {
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
-      const names = await contract.getAllNames();
-      console.log("names",names)
+        setLoading(true)
+    try {
+      console.log("fetch MINTS---------")
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
+        console.log("contract")
+        // Get all the domain names from our contract
+        const names = await contract.getAllNames();
+        const mintRecords = await Promise.all(names.map(async (name)=>{
+        // For each name, get the record and the address
+        const mintRecord = await contract.getRecord(name);
+        const ownerAddr = await contract.getAddress(name);
+        return{
+          id: names.indexOf(name),
+          name: name,
+          record: mintRecord,
+          ownerAddr: ownerAddr
+        }
+        }));
+    console.log("MINTS FETCHED ", mintRecords);
+		setMints(mintRecords);
+    setLoading(false)
+      }
+    } catch (error) {
+      console.log("fetch mints error", error);
+          setLoading(false)
     }
-    //     setLoading(true)
-    // try {
-    //   console.log("fetch MINTS---------")
-    //   const { ethereum } = window;
-    //   if (ethereum) {
-    //     const provider = new ethers.providers.Web3Provider(ethereum);
-    //     const signer = provider.getSigner();
-    //     const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
-    //     console.log("contract")
-    //     // Get all the domain names from our contract
-    //     const names = await contract.getAllNames();
-    //     const mintRecords = await Promise.all(names.map(async (name)=>{
-    //     // For each name, get the record and the address
-    //     const mintRecord = await contract.getRecord(name);
-    //     const ownerAddr = await contract.getAddress(name);
-    //     return{
-    //       id: names.indexOf(name),
-    //       name: name,
-    //       record: mintRecord,
-    //       ownerAddr: ownerAddr
-    //     }
-    //     }));
-    // console.log("MINTS FETCHED ", mintRecords);
-		// setMints(mintRecords);
-    // setLoading(false)
-    //   }
-    // } catch (error) {
-    //   console.log("fetch mints error", error);
-    //       setLoading(false)
-    // }
-    //     setLoading(false)
+        setLoading(false)
   }
 
 const renderMints = () => {
@@ -447,7 +442,7 @@ const cancelEdit = () =>{
             </div>
             {/* Display a logo and wallet connection status*/}
             <div className="right">
-              <img alt="Network logo" className="logo" src={ network.includes("Polygon") ? polygonLogo : ethLogo} />
+              <img alt="Network logo" className="logo" src={ network.includes("Shardeum") ? shardeumLogo : ethLogo} />
               { currentAccount ? <a rel="noopener noreferrer" target="_blank" href={`https://polygonscan.com/address/`+ currentAccount}> Wallet: {currentAccount.slice(0, 6)} ... {currentAccount.slice(-4) }</a> : <p> Not connected </p> }
 		        </div>
 					</header>
