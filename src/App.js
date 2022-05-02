@@ -203,10 +203,10 @@ const App = () => {
       const recipt = await tx.wait();
       console.log("SHM->recipt",recipt)
       if(recipt.status === 1){
-        console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
+        console.log("Domain minted! https://explorer.liberty10.shardeum.org/transaction/"+tx.hash);
         tx = await contract.setRecord(domain, record);
         await tx.wait();
-        console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
+        console.log("Record set! https://explorer.liberty10.shardeum.org/transaction/"+tx.hash);
         const reciptArgs = recipt.events && recipt.events[1].args &&  recipt.events[1].args[2];
         const tokenId = parseInt(reciptArgs._hex);
         setLoading(false);
@@ -366,7 +366,8 @@ const renderMints = () => {
           return (
               <div className="mint-item" key={index}>
                   <div className='mint-row'>
-                    <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
+                    {/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
+                    <a className="link" href={`https://explorer.liberty10.shardeum.org/transaction/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
                       <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
                     </a>
                     {/* If mint.owner is currentAccount, add an "edit" button*/}
