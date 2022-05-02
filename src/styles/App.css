@@ -378,6 +378,10 @@ body {
 }
 }
 
+.price-span{
+  font-size: 20px;
+  color: #fff;
+}
 @media screen and (max-width:2924px){
   header{
     align-items: center;

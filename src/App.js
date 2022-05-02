@@ -35,9 +35,23 @@ const App = () => {
     domain:"",
     record:""
   })
-  
+  const [price, setPrice] = useState("0");
+
   const handler = (e) =>{
     const {value,name} = e.target;
+    if(name === "domain"){
+      if(value.length < 3){
+        setPrice("0")
+      }else if(value.length === 3){
+        setPrice("1")
+      }else if(value.length === 4){
+        setPrice("0.5")
+      }else if(value.length === 5){
+        setPrice("0.3")
+      }else if(value.length > 5){
+        setPrice("0.1")
+      }
+    }
     setInputF((prevState)=>({
       ...prevState,
       [name]:value
@@ -127,7 +141,7 @@ const App = () => {
               <p className='tld'> {tld} </p>
               </div>
               <Input value={inputF.record} name="record" placeholder="record" action={handler} />
-              
+              {price > 0 && <span class="price-span">price : ${price} SHM </span>}
 
               {editing ? (
                 <div className="button-container">
@@ -443,7 +457,7 @@ const cancelEdit = () =>{
             {/* Display a logo and wallet connection status*/}
             <div className="right">
               <img alt="Network logo" className="logo" src={ network.includes("Shardeum") ? shardeumLogo : ethLogo} />
-              { currentAccount ? <a rel="noopener noreferrer" target="_blank" href={`https://polygonscan.com/address/`+ currentAccount}> Wallet: {currentAccount.slice(0, 6)} ... {currentAccount.slice(-4) }</a> : <p> Not connected </p> }
+              { currentAccount ? <a rel="noopener noreferrer" target="_blank" href={`https://explorer.liberty10.shardeum.org/account/`+ currentAccount}> Wallet: {currentAccount.slice(0, 6)} ... {currentAccount.slice(-4) }</a> : <p> Not connected </p> }
 		        </div>
 					</header>
 				</div>
