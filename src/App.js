@@ -369,7 +369,8 @@ const renderMints = () => {
         mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase()).map((mint, index) =>{
           return (
                 <div className="mint-item" key={index}>
-                    <div className='mint-row' data-title={mint.record}>
+                  {/**Minted Doimains are rendered in NFT format */}
+                    <div className='mint-row test' data-title={mint.record}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="270" height="270" fill="none"><path fill="url(#a)" d="M0 0h270v270H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="270" width="270"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
                         <svg x="15" y="15" width="120" height="108" viewBox="0 0 120 108" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M29.4358 77.2888L16.7213 100H103.279L90.5643 77.2888H29.4358Z" fill="white"/>
@@ -379,10 +380,10 @@ const renderMints = () => {
                         </svg>
                         <defs>
                             <linearGradient id="a" x1="0" y1="0" x2="270" y2="270" 
-                            gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#cb5eee"/>
-                            <stop offset="1" stop-color="#0cd7e4" stop-opacity=".99"/>
-                        </linearGradient>
+                              gradientUnits="userSpaceOnUse">
+                              <stop stop-color="#cb5eee"/>
+                              <stop offset="1" stop-color="#0cd7e4" stop-opacity=".99"/>
+                            </linearGradient>
                         </defs>
                         <text x="32.5" y="231" font-size="27" fill="#fff" filter="url(#b)" font-family="Plus Jakarta Sans,DejaVu Sans,Noto Color Emoji,Apple Color Emoji,sans-serif" font-weight="bold">
                           {mint.name}{tld}

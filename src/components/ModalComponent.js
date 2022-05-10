@@ -30,7 +30,7 @@ export default class ModalComponent extends React.PureComponent{
     return (
       <div>
         <Modal
-          class="modal-class"
+          className="modal-class"
           containerClassName="test"
           closeOnOuterClick={true}
           show={this.props.isModal}
