@@ -405,12 +405,26 @@ const renderMints = () => {
         mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() !== currentAccount.toLowerCase()).map((mint, index) =>{
           return (
               <div className="mint-item" key={index}>
-                  <div className='mint-row'>
-                    <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
-                      <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
-                    </a>
-                  </div>
-                  <p> {mint.record} </p>
+                <div className='mint-row test' data-title={mint.record}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="270" height="270" fill="none"><path fill="url(#a)" d="M0 0h270v270H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="270" width="270"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
+                    <svg x="15" y="15" width="120" height="108" viewBox="0 0 120 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M29.4358 77.2888L16.7213 100H103.279L90.5643 77.2888H29.4358Z" fill="white"/>
+                    <path d="M60 22.7112L47.2856 0L4 77.2889H29.4358L60 22.7112Z" fill="white"/>
+                    <path d="M90.5642 77.2889H116L72.7145 -3.05176e-05L60 22.7111L90.5642 77.2889Z" fill="white"/>
+                    <path d="M60 73.3853C67.6037 73.3853 73.7677 67.0303 73.7677 59.1909C73.7677 51.3515 67.6037 44.9964 60 44.9964C52.3964 44.9964 46.2324 51.3515 46.2324 59.1909C46.2324 67.0303 52.3964 73.3853 60 73.3853Z" fill="white"/>
+                    </svg>
+                    <defs>
+                        <linearGradient id="a" x1="0" y1="0" x2="270" y2="270" 
+                          gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#cb5eee"/>
+                          <stop offset="1" stop-color="#0cd7e4" stop-opacity=".99"/>
+                        </linearGradient>
+                    </defs>
+                    <text x="32.5" y="231" font-size="27" fill="#fff" filter="url(#b)" font-family="Plus Jakarta Sans,DejaVu Sans,Noto Color Emoji,Apple Color Emoji,sans-serif" font-weight="bold">
+                      {mint.name}{tld}
+                    </text>
+                  </svg>
+                </div>
               </div>
           )
         })
