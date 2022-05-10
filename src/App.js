@@ -15,8 +15,8 @@ import Confetti from "./components/Confetti"
 import ModalComponent from "./components/ModalComponent"
 
 // Constants
-const CONTRACT_ADDRESS = "0xc7ee8d303d79c708ad1e0c63ead1c821bc787504"
-const tld = '.shardian';
+const CONTRACT_ADDRESS = "0x61625d89FCb24C9935caeA3415FE98da02430ED8"
+const tld = '.shm';
 
 const App = () => {
 
@@ -43,13 +43,13 @@ const App = () => {
       if(value.length < 3){
         setPrice("0")
       }else if(value.length === 3){
-        setPrice("1")
+        setPrice("90")
       }else if(value.length === 4){
-        setPrice("0.5")
+        setPrice("50")
       }else if(value.length === 5){
-        setPrice("0.3")
+        setPrice("30")
       }else if(value.length > 5){
-        setPrice("0.1")
+        setPrice("10")
       }
     }
     setInputF((prevState)=>({
@@ -189,7 +189,7 @@ const App = () => {
       alert("domain name must be atleast 3 charecters long");
       return
     }
-    const price = domain.length === 3 ? "0.5" : domain.length === 4 ? "0.3" : "0.1";
+    const price = domain.length === 3 ? "90" : domain.length === 4 ? "50" : domain.length === 5 ? "30" : "10";
     console.log("Minting Domain ", inputF.domain, "with price", price);
 
     try {
@@ -198,16 +198,19 @@ const App = () => {
       const signer = provider.getSigner();
       const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
       console.log("Going to pop wallet now to pay gas...")
+      console.log("value",ethers.utils.parseEther(price))
       let tx = await contract.registers(domain,{value:ethers.utils.parseEther(price)})
       console.log("SHM->tx",tx)
       const recipt = await tx.wait();
       console.log("SHM->recipt",recipt)
       if(recipt.status === 1){
+        console.log("recipt",recipt)
         console.log("Domain minted! https://explorer.liberty10.shardeum.org/transaction/"+tx.hash);
         tx = await contract.setRecord(domain, record);
         await tx.wait();
         console.log("Record set! https://explorer.liberty10.shardeum.org/transaction/"+tx.hash);
-        const reciptArgs = recipt.events && recipt.events[1].args &&  recipt.events[1].args[2];
+        // const reciptArgs = recipt.events && recipt.events[1].args &&  recipt.events[1].args[2];
+        const reciptArgs = recipt.events && recipt.events[0].args &&  recipt.events[0].args[2];
         const tokenId = parseInt(reciptArgs._hex);
         setLoading(false);
         setIsModal(!isModal);
@@ -225,6 +228,7 @@ const App = () => {
           domain:"",
           record:""
         })
+        setPrice("0")
 
         setTimeout(() => {
         setConfetti(false)
@@ -302,7 +306,7 @@ const App = () => {
         const signer = provider.getSigner();
         const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
 
-        let tx = await contract.setRecords(domain,record)
+        let tx = await contract.setRecord(domain,record)
         await tx.wait();
         console.log("record set https://explorer.liberty10.shardeum.org/transaction/"+tx.hash)
 
@@ -364,23 +368,47 @@ const renderMints = () => {
       {
         mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase()).map((mint, index) =>{
           return (
-              <div className="mint-item" key={index}>
-                  <div className='mint-row'>
-                    {/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
-                    <a className="link" href={`https://explorer.liberty10.shardeum.org/transaction/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
-                      <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
-                    </a>
-                    {/* If mint.owner is currentAccount, add an "edit" button*/}
-                    <button className="edit-button" onClick={() => editRecord(mint)}>
-                      <img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
-                    </button>
-                  </div>
-                  <p> {mint.record} </p>
-              </div>
+              // <div className="mint-item" key={index}>
+              //     <div className='mint-row'>
+              //       {/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
+              //       <a className="link" href={`https://explorer.liberty10.shardeum.org/transaction/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
+              //         <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
+              //       </a>
+              //       {/* If mint.owner is currentAccount, add an "edit" button*/}
+              //       <button className="edit-button" onClick={() => editRecord(mint)}>
+              //         <img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
+              //       </button>
+              //     </div>
+              //     <p> {mint.record} </p>
+              // </div>
+                <div className="mint-item" key={index}>
+                    <div className='mint-row' data-title={mint.record}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="270" fill="none"><path fill="url(#a)" d="M0 0h270v270H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="270" width="270"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
+                        <svg x="15" y="15" width="120" height="108" viewBox="0 0 120 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.4358 77.2888L16.7213 100H103.279L90.5643 77.2888H29.4358Z" fill="white"/>
+                        <path d="M60 22.7112L47.2856 0L4 77.2889H29.4358L60 22.7112Z" fill="white"/>
+                        <path d="M90.5642 77.2889H116L72.7145 -3.05176e-05L60 22.7111L90.5642 77.2889Z" fill="white"/>
+                        <path d="M60 73.3853C67.6037 73.3853 73.7677 67.0303 73.7677 59.1909C73.7677 51.3515 67.6037 44.9964 60 44.9964C52.3964 44.9964 46.2324 51.3515 46.2324 59.1909C46.2324 67.0303 52.3964 73.3853 60 73.3853Z" fill="white"/>
+                        </svg>
+                        <defs>
+                            <linearGradient id="a" x1="0" y1="0" x2="270" y2="270" 
+                            gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#cb5eee"/>
+                            <stop offset="1" stop-color="#0cd7e4" stop-opacity=".99"/>
+                        </linearGradient>
+                        </defs>
+                        <text x="32.5" y="231" font-size="27" fill="#fff" filter="url(#b)" font-family="Plus Jakarta Sans,DejaVu Sans,Noto Color Emoji,Apple Color Emoji,sans-serif" font-weight="bold">
+                          {mint.name}{tld}
+                        </text>
+                      </svg>
+                    </div>
+                    {/* <p> {mint.record} </p> */}
+                </div>
           )
         })
       }
       </div>
+      
 
       <p className="subtitle"> All minted domains on Shardeum Name Space ✨</p>
       <div className="mint-list">  

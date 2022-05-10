@@ -25,7 +25,7 @@ export default class ModalComponent extends React.PureComponent{
   }
 
   render(){
-    const CONTRACT_ADDRESS = "0x8685ddf37a6b722ce15432899726d919b1c5d0cc"
+    const CONTRACT_ADDRESS = "0x61625d89FCb24C9935caeA3415FE98da02430ED8"
     const OPENSEA_CONTRACT = "https://testnets.opensea.io/assets/mumbai/" + CONTRACT_ADDRESS ;
     return (
       <div>
@@ -37,7 +37,8 @@ export default class ModalComponent extends React.PureComponent{
           onClose={()=>this.props.isModalFn(!this.props.isModal)}
           >
             <a style={closeStyle} onClick={()=>this.props.isModalFn(!this.props.isModal)}>X</a>
-            <div><a href={ OPENSEA_CONTRACT + "/" + this.props.data.tokenId }  target="_blank" rel="noopener noreferrer">Your Domain <i>{this.props.data.domainMinted}.shadian</i> minted Opensea 💜</a></div>
+            {/* <div><a href={ OPENSEA_CONTRACT + "/" + this.props.data.tokenId }  target="_blank" rel="noopener noreferrer">Your Domain <i>{this.props.data.domainMinted}.shadian</i> minted Opensea 💜</a></div> */}
+            <div><a  target="_blank" rel="noopener noreferrer">Your Domain <i>{this.props.data.domainMinted}.shm</i> minted 💜</a></div>
         </Modal>
       </div>
     )
