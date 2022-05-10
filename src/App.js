@@ -368,19 +368,6 @@ const renderMints = () => {
       {
         mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase()).map((mint, index) =>{
           return (
-              // <div className="mint-item" key={index}>
-              //     <div className='mint-row'>
-              //       {/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
-              //       <a className="link" href={`https://explorer.liberty10.shardeum.org/transaction/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer">
-              //         <p className="underlined">{' '}{mint.name}{tld}{' '}</p>
-              //       </a>
-              //       {/* If mint.owner is currentAccount, add an "edit" button*/}
-              //       <button className="edit-button" onClick={() => editRecord(mint)}>
-              //         <img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
-              //       </button>
-              //     </div>
-              //     <p> {mint.record} </p>
-              // </div>
                 <div className="mint-item" key={index}>
                     <div className='mint-row' data-title={mint.record}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="270" height="270" fill="none"><path fill="url(#a)" d="M0 0h270v270H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="270" width="270"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
@@ -402,6 +389,7 @@ const renderMints = () => {
                         </text>
                       </svg>
                     </div>
+                    
                     {/* <p> {mint.record} </p> */}
                 </div>
           )
