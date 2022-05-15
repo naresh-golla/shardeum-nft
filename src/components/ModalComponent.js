@@ -1,4 +1,5 @@
 import React,{useEffect,useState} from 'react';
+
 import Modal, {closeStyle} from 'simple-react-modal'
  
 export default class ModalComponent extends React.PureComponent{

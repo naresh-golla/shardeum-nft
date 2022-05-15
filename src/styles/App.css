@@ -21,7 +21,7 @@ p {
 }
 
 .header-container {
-  padding-top: 30px;
+  padding-top: 3px;
 }
 
 header{
@@ -493,4 +493,22 @@ body {
 }
 [data-title] {
   position: relative;
+}
+
+.modal-class{
+  position: fixed;
+  font-family: Arial, Helvetica, sans-serif;
+  inset: 0px;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 99999;
+  transition: opacity 1s ease-in 0s;
+  pointer-events: auto;
+  overflow-y: auto;
+}
+.test{
+  width: 400px;
+    position: relative;
+    margin: 10% auto;
+    padding: 5px 20px 13px;
+    background: rgb(255, 255, 255);
 }
