@@ -181,7 +181,7 @@ const App = () => {
   const mintDomain = async () => {
     let {domain, record} = inputF;
 
-    if(!domain){
+    if(!domain || domain.trim() == ''){
       alert("type a domain name to mint")
       return
     }
@@ -335,18 +335,21 @@ const App = () => {
         console.log("contract")
         // Get all the domain names from our contract
         const names = await contract.getAllNames();
-        const mintRecords = await Promise.all(names.map(async (name)=>{
-        // For each name, get the record and the address
-        const mintRecord = await contract.getRecord(name);
-        const ownerAddr = await contract.getAddress(name);
-        return{
-          id: names.indexOf(name),
-          name: name,
-          record: mintRecord,
-          ownerAddr: ownerAddr
-        }
-        }));
-    console.log("MINTS FETCHED ", mintRecords);
+        let reNames = names.filter(entry => entry.trim() != '');
+        // let slicedNames = reNames.slice(0,5)
+        const mintRecords = await Promise.all(reNames.map(async (name)=>{
+          // For each name, get the record and the address
+          // const mintRecord = await contract.getRecord(name); 
+          // const ownerAddr = await contract.getAddress(name); 
+          return{
+            id: names.indexOf(name),
+            name: name,
+            record: "",
+            ownerAddr: ""
+            // record: mintRecord,
+            // ownerAddr: ownerAddr
+          }
+        })); 
 		setMints(mintRecords);
     setLoading(false)
       }
@@ -363,7 +366,7 @@ const renderMints = () => {
   console.log("isAddrHasNft",isAddrHasNft)
     return(
       <div className="mint-container">     
-      {isAddrHasNft && <p className="subtitle">Your Recently minted domains! ✨</p>}
+      {/* {isAddrHasNft && <p className="subtitle">Your Recently minted domains! ✨</p>} */}
       <div className="mint-list">  
       {
         mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase()).map((mint, index) =>{
@@ -402,7 +405,8 @@ const renderMints = () => {
       <p className="subtitle"> All minted domains on Shardeum Name Space ✨</p>
       <div className="mint-list">  
       {
-        mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() !== currentAccount.toLowerCase()).map((mint, index) =>{
+       
+       [...mints].reverse().filter((_mint, index) => _mint.ownerAddr.toLowerCase() !== currentAccount.toLowerCase()).map((mint, index) =>{
           return (
               <div className="mint-item" key={index}>
                 <div className='mint-row' data-title={mint.record}>
