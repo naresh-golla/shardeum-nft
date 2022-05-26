@@ -389,15 +389,15 @@ const App = () => {
         // let trimNames = names.filter(entry => entry.trim() != '').slice(0,10)
         const mintRecords = await Promise.all(trimNames.map(async (name)=>{
           // For each name, get the record and the address
-          // const mintRecord = await contract.getRecord(name); 
-          // const ownerAddr = await contract.getAddress(name); 
+          const mintRecord = await contract.getRecord(name); 
+          const ownerAddr = await contract.getAddress(name); 
           return{
             id: names.indexOf(name),
             name: name,
-            // record: mintRecord,
-            // ownerAddr: ownerAddr
-            record: "",
-            ownerAddr: ""
+            record: mintRecord,
+            ownerAddr: ownerAddr,
+            // record: "",
+            // ownerAddr: ""
           }
         })); 
 		setMints(mintRecords);
