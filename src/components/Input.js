@@ -8,6 +8,7 @@ export const Input = ({value, placeholder,name, action})=>{
             name={name}
             placeholder={placeholder}
             onChange={e=>action(e)}
+            autoComplete="off"
         />
     )
 }

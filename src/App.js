@@ -13,6 +13,8 @@ import ethLogo from './assets/ethlogo.png';
 import { networks } from './utils/networks';
 import Confetti from "./components/Confetti"
 import ModalComponent from "./components/ModalComponent"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Constants
 const CONTRACT_ADDRESS = "0x61625d89FCb24C9935caeA3415FE98da02430ED8"
@@ -21,6 +23,7 @@ const tld = '.shm';
 const App = () => {
 
   const [mints, setMints] = useState([]);
+  const [allNames, setAllNames] = useState([]);
   const [isModal, setIsModal] = useState(false); 
   const [modalData, setModalData] = useState({
     domainMinted: "",
@@ -38,6 +41,7 @@ const App = () => {
   const [price, setPrice] = useState("0");
 
   const handler = (e) =>{
+    // allNames
     const {value,name} = e.target;
     if(name === "domain"){
       if(value.length < 3){
@@ -57,6 +61,7 @@ const App = () => {
       [name]:value
     }))
   }
+
 
   const connectWallet = async ()=>{
         setLoading(true)
@@ -182,11 +187,55 @@ const App = () => {
     let {domain, record} = inputF;
 
     if(!domain || domain.trim() == ''){
-      alert("type a domain name to mint")
+      toast.error('type a domain name to mint!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+
       return
     }
     if(domain.length < 3){
-      alert("domain name must be atleast 3 charecters long");
+      toast.error('domain name must be atleast 3 charecters long!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+      return
+    }
+    if(domain.length > 10){
+      toast.error('domain name must be less than or equal to 10 charecters long!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+      return
+    }
+    let filteredArray = allNames.filter((str)=>{
+      return str.toLowerCase().indexOf(domain.toLowerCase()) >= 0; 
+    });
+    if(filteredArray.length > 0){
+      toast.error(`domain name "${filteredArray[0]}.shm" is already registered, please try with different name`, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
       return
     }
     const price = domain.length === 3 ? "90" : domain.length === 4 ? "50" : domain.length === 5 ? "30" : "10";
@@ -335,19 +384,20 @@ const App = () => {
         console.log("contract")
         // Get all the domain names from our contract
         const names = await contract.getAllNames();
-        let reNames = names.filter(entry => entry.trim() != '');
-        // let slicedNames = reNames.slice(0,5)
-        const mintRecords = await Promise.all(reNames.map(async (name)=>{
+        setAllNames(names);
+        let trimNames = names.filter(entry => entry.trim() != '');
+        // let trimNames = names.filter(entry => entry.trim() != '').slice(0,10)
+        const mintRecords = await Promise.all(trimNames.map(async (name)=>{
           // For each name, get the record and the address
           // const mintRecord = await contract.getRecord(name); 
           // const ownerAddr = await contract.getAddress(name); 
           return{
             id: names.indexOf(name),
             name: name,
-            record: "",
-            ownerAddr: ""
             // record: mintRecord,
             // ownerAddr: ownerAddr
+            record: "",
+            ownerAddr: ""
           }
         })); 
 		setMints(mintRecords);
@@ -366,7 +416,7 @@ const renderMints = () => {
   console.log("isAddrHasNft",isAddrHasNft)
     return(
       <div className="mint-container">     
-      {/* {isAddrHasNft && <p className="subtitle">Your Recently minted domains! ✨</p>} */}
+      {(isAddrHasNft.length > 0) && <p className="subtitle">Your Recently minted domains! ✨</p>}
       <div className="mint-list">  
       {
         mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase()).map((mint, index) =>{
@@ -402,7 +452,7 @@ const renderMints = () => {
       </div>
       
 
-      <p className="subtitle"> All minted domains on Shardeum Name Space ✨</p>
+      <p className="subtitle">All minted domains on Shardeum Name Space ✨</p>
       <div className="mint-list">  
       {
        
@@ -485,6 +535,7 @@ const cancelEdit = () =>{
       <ModalComponent data = {modalData} isModal = {isModal} isModalFn={isModalFn}/>
 
 				<div className="header-container">
+        <ToastContainer />
 					<header>
             <div className="left">
               <p className="title">💜 Shardeum Name Service</p>
