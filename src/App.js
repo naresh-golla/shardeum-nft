@@ -17,7 +17,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Constants
-const CONTRACT_ADDRESS = "0x61625d89FCb24C9935caeA3415FE98da02430ED8"
+// const CONTRACT_ADDRESS = "0x61625d89FCb24C9935caeA3415FE98da02430ED8"
+const CONTRACT_ADDRESS = "0x2879dc124811F5E06E99271da9D68F212F675203"
 const tld = '.shm';
 
 const App = () => {
@@ -130,10 +131,10 @@ const App = () => {
   )
 
   const renderInputForm = ()=>{
-    if(network !== "Shardeum Liberty 1.0"){
+    if(network !== "Shardeum Liberty 1.1"){
         return (
             <div className="connect-wallet-container">
-              <h2>Please switch to Shardeum Liberty 1.0</h2>
+              <h2>Please switch to Shardeum Liberty 1.1</h2>
               {/* This button will call our switch network function */}
               <button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
             </div>
@@ -177,7 +178,7 @@ const App = () => {
   },[inputF])
 
   useEffect(() => {
-    if (network === 'Shardeum Liberty 1.0') {
+    if (network === 'Shardeum Liberty 1.1') {
       fetchMints();
       console.log("network",network)
     }
@@ -185,6 +186,11 @@ const App = () => {
   
   const mintDomain = async () => {
     let {domain, record} = inputF;
+
+    let names = mints.map(item=>{
+      return item.name
+    })
+    console.log("names",names)
 
     if(!domain || domain.trim() == ''){
       toast.error('type a domain name to mint!', {
@@ -223,7 +229,7 @@ const App = () => {
         });
       return
     }
-    let filteredArray = allNames.filter((str)=>{
+    let filteredArray = names.filter((str)=>{
       return str.toLowerCase().indexOf(domain.toLowerCase()) >= 0; 
     });
     if(filteredArray.length > 0){
@@ -248,16 +254,16 @@ const App = () => {
       const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
       console.log("Going to pop wallet now to pay gas...")
       console.log("value",ethers.utils.parseEther(price))
-      let tx = await contract.registers(domain,{value:ethers.utils.parseEther(price)})
+      let tx = await contract.registers(domain.trim(),record.trim(),{value:ethers.utils.parseEther(price)})
       console.log("SHM->tx",tx)
       const recipt = await tx.wait();
       console.log("SHM->recipt",recipt)
       if(recipt.status === 1){
         console.log("recipt",recipt)
         console.log("Domain minted! https://explorer.liberty10.shardeum.org/transaction/"+tx.hash);
-        tx = await contract.setRecord(domain, record);
-        await tx.wait();
-        console.log("Record set! https://explorer.liberty10.shardeum.org/transaction/"+tx.hash);
+        // tx = await contract.setRecord(domain, record);
+        // await tx.wait();
+        // console.log("Record set! https://explorer.liberty10.shardeum.org/transaction/"+tx.hash);
         // const reciptArgs = recipt.events && recipt.events[1].args &&  recipt.events[1].args[2];
         const reciptArgs = recipt.events && recipt.events[0].args &&  recipt.events[0].args[2];
         const tokenId = parseInt(reciptArgs._hex);
@@ -313,7 +319,7 @@ const App = () => {
                 params: [
                   {	
                     chainId: '0x1f90',
-                    chainName: 'Shardeum Liberty 1.0',
+                    chainName: 'Shardeum Liberty 1.1',
                     rpcUrls: ['https://liberty10.shardeum.org/'],
                     nativeCurrency: {
                         name: "Shardeum",
@@ -371,36 +377,74 @@ const App = () => {
     }
     setLoading(false);
   }
-
+  // const renderArr = async(getAllNamesCount,contract)=>{
+  //   let allNamesArr = []
+  //   for(let i =0; i < getAllNamesCount; i++){
+  //     let fetchGroup = await contract.fetchGroup(i);
+  //     allNamesArr.push(fetchGroup)
+  //     console.log("fetchGroup-->",fetchGroup);          
+  //   }
+  //   return allNamesArr;
+  // }
   const fetchMints = async () => {
         setLoading(true)
     try {
-      console.log("fetch MINTS---------")
       const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
-        console.log("contract")
+        console.log("contract",contract)
         // Get all the domain names from our contract
-        const names = await contract.getAllNames();
-        setAllNames(names);
-        let trimNames = names.filter(entry => entry.trim() != '');
-        // let trimNames = names.filter(entry => entry.trim() != '').slice(0,10)
-        const mintRecords = await Promise.all(trimNames.map(async (name)=>{
+        // const names = await contract.getAllNames();
+        const names =[];
+        // let allNames = await contract.getAllDataOfAddress(currentAccount);
+        let allNames = await contract.getAllData();
+        console.log("allNames-->",allNames);
+        let allMintedArray = []
+        const mintRecords = await allNames.map(async (name)=>{
           // For each name, get the record and the address
-          // const mintRecord = await contract.getRecord(name); 
-          // const ownerAddr = await contract.getAddress(name); 
-          return{
-            id: names.indexOf(name),
-            name: name,
-            // record: mintRecord,
-            // ownerAddr: ownerAddr
-            record: "",
-            ownerAddr: ""
+          let subStr = name.split('|+|')
+          console.log("subStr",subStr)
+          let obj = {
+            name: subStr[0],
+            record: subStr[1],
+            ownerAddr: subStr[2],
+            id: subStr[3],
           }
-        })); 
-		setMints(mintRecords);
+          allMintedArray.push(obj)
+        }); 
+        // const getAllNamesCount = await contract.getAllNamesCount();
+        // const getAllNamesCountParse = parseInt(getAllNamesCount._hex);
+        // console.log("getAllNamesCount-->",getAllNamesCountParse);
+
+        // let finalArr = await renderArr(getAllNamesCountParse,contract);
+        // let fetchGroup = await contract.fetchGroup(0);
+        
+
+        // console.log("finalArr",finalArr)
+        // console.log("fetchGroup",fetchGroup)
+
+
+        // setAllNames(names);
+        // let trimNames = names.filter(entry => entry.trim() != '');
+        // // let trimNames = names.filter(entry => entry.trim() != '').slice(0,10)
+        // const mintRecords = await Promise.all(trimNames.map(async (name)=>{
+        //   // For each name, get the record and the address
+        //   // const mintRecord = await contract.getRecord(name); 
+        //   const ownerAddr = await contract.getAddress(name); 
+        //   console.log("ownerAddr",ownerAddr)
+        //   return{
+        //     id: names.indexOf(name),
+        //     name: name,
+        //     // record: mintRecord,
+        //     ownerAddr: ownerAddr,
+        //     record: "",
+        //     // ownerAddr: ""
+        //   }
+        // })); 
+    console.log("All allMintedArray-->",allMintedArray)
+		setMints(allMintedArray);
     setLoading(false)
       }
     } catch (error) {
@@ -412,6 +456,7 @@ const App = () => {
 
 const renderMints = () => {
 	if (currentAccount && mints.length > 0) {
+    console.log("mints",mints)
   let isAddrHasNft = mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase());
   console.log("isAddrHasNft",isAddrHasNft)
     return(
@@ -424,7 +469,7 @@ const renderMints = () => {
                 <div className="mint-item" key={index}>
                   {/**Minted Doimains are rendered in NFT format */}
                     <div className='mint-row' data-title={mint.record}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="270" fill="none"><path fill="url(#a)" d="M0 0h270v270H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="270" width="270"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" fill="none"><path fill="url(#a)" d="M0 0h280v280H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="280" width="280"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
                         <svg x="15" y="15" width="120" height="108" viewBox="0 0 120 108" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M29.4358 77.2888L16.7213 100H103.279L90.5643 77.2888H29.4358Z" fill="white"/>
                         <path d="M60 22.7112L47.2856 0L4 77.2889H29.4358L60 22.7112Z" fill="white"/>
@@ -432,7 +477,7 @@ const renderMints = () => {
                         <path d="M60 73.3853C67.6037 73.3853 73.7677 67.0303 73.7677 59.1909C73.7677 51.3515 67.6037 44.9964 60 44.9964C52.3964 44.9964 46.2324 51.3515 46.2324 59.1909C46.2324 67.0303 52.3964 73.3853 60 73.3853Z" fill="white"/>
                         </svg>
                         <defs>
-                            <linearGradient id="a" x1="0" y1="0" x2="270" y2="270" 
+                            <linearGradient id="a" x1="0" y1="0" x2="280" y2="280" 
                               gradientUnits="userSpaceOnUse">
                               <stop stop-color="#cb5eee"/>
                               <stop offset="1" stop-color="#0cd7e4" stop-opacity=".99"/>
@@ -460,7 +505,7 @@ const renderMints = () => {
           return (
               <div className="mint-item" key={index}>
                 <div className='mint-row' data-title={mint.record}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="270" height="270" fill="none"><path fill="url(#a)" d="M0 0h270v270H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="270" width="270"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" fill="none"><path fill="url(#a)" d="M0 0h280v280H0z"/><defs><filter id="b" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" height="280" width="280"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".225" width="200%" height="200%"/></filter></defs>
                     <svg x="15" y="15" width="120" height="108" viewBox="0 0 120 108" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M29.4358 77.2888L16.7213 100H103.279L90.5643 77.2888H29.4358Z" fill="white"/>
                     <path d="M60 22.7112L47.2856 0L4 77.2889H29.4358L60 22.7112Z" fill="white"/>
@@ -468,7 +513,7 @@ const renderMints = () => {
                     <path d="M60 73.3853C67.6037 73.3853 73.7677 67.0303 73.7677 59.1909C73.7677 51.3515 67.6037 44.9964 60 44.9964C52.3964 44.9964 46.2324 51.3515 46.2324 59.1909C46.2324 67.0303 52.3964 73.3853 60 73.3853Z" fill="white"/>
                     </svg>
                     <defs>
-                        <linearGradient id="a" x1="0" y1="0" x2="270" y2="270" 
+                        <linearGradient id="a" x1="0" y1="0" x2="280" y2="280" 
                           gradientUnits="userSpaceOnUse">
                           <stop stop-color="#cb5eee"/>
                           <stop offset="1" stop-color="#0cd7e4" stop-opacity=".99"/>
