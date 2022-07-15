@@ -26,7 +26,7 @@ export default class ModalComponent extends React.PureComponent{
   }
 
   render(){
-    const CONTRACT_ADDRESS = "0x4e4d59d45BA9611F8E9BB2AC963cb6af78e6418E"
+    const CONTRACT_ADDRESS = "0xdAB95e62d7b4cC311a67158ffcBE5642BBd0B5AE"
     const OPENSEA_CONTRACT = "https://testnets.opensea.io/assets/mumbai/" + CONTRACT_ADDRESS ;
     return (
       <div>
