@@ -19,7 +19,8 @@ import 'react-toastify/dist/ReactToastify.css';
 // Constants
 // const CONTRACT_ADDRESS = "0x61625d89FCb24C9935caeA3415FE98da02430ED8"
 // const CONTRACT_ADDRESS = "0x2879dc124811F5E06E99271da9D68F212F675203"
-const CONTRACT_ADDRESS = "0x4e4d59d45BA9611F8E9BB2AC963cb6af78e6418E"
+// const CONTRACT_ADDRESS = "0x4e4d59d45BA9611F8E9BB2AC963cb6af78e6418E"
+const CONTRACT_ADDRESS = "0xdAB95e62d7b4cC311a67158ffcBE5642BBd0B5AE"
 const tld = '.shm';
 
 const App = () => {
@@ -113,6 +114,7 @@ const App = () => {
       method:"eth_chainId"
     })
     console.log("chainId",networks[chainId])
+    console.log("chainId--",chainId)
     setNetwork(networks[chainId])
 
     ethereum.on("chainChanged", handleChainChanged);
@@ -461,7 +463,8 @@ const renderMints = () => {
   let isAddrHasNft = mints.filter((_mint, index) => _mint.ownerAddr.toLowerCase() === currentAccount.toLowerCase());
   console.log("isAddrHasNft",isAddrHasNft)
     return(
-      <div className="mint-container">     
+      <div className="mint-container">  
+      {/* {(isAddrHasNft.length = 0) && <p className="subtitle">Minted your domains! ✨</p>}    */}
       {(isAddrHasNft.length > 0) && <p className="subtitle">Your Recently minted domains! ✨</p>}
       <div className="mint-list">  
       {
