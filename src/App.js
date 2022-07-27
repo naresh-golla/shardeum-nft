@@ -20,7 +20,8 @@ import 'react-toastify/dist/ReactToastify.css';
 // const CONTRACT_ADDRESS = "0x61625d89FCb24C9935caeA3415FE98da02430ED8"
 // const CONTRACT_ADDRESS = "0x2879dc124811F5E06E99271da9D68F212F675203"
 // const CONTRACT_ADDRESS = "0x4e4d59d45BA9611F8E9BB2AC963cb6af78e6418E"
-const CONTRACT_ADDRESS = "0xdAB95e62d7b4cC311a67158ffcBE5642BBd0B5AE"
+// const CONTRACT_ADDRESS = "0xdAB95e62d7b4cC311a67158ffcBE5642BBd0B5AE"
+const CONTRACT_ADDRESS = "0xcb4026b2C94347214C8b44a535a2E04d4719CB75"
 const tld = '.shm';
 
 const App = () => {
@@ -137,7 +138,7 @@ const App = () => {
     if(network !== "Shardeum Liberty 1.1"){
         return (
             <div className="connect-wallet-container">
-              <h2>Please switch to Shardeum Liberty 1.1</h2>
+              <h2>Please switch to Shardeum Liberty 1.3</h2>
               {/* This button will call our switch network function */}
               <button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch</button>
             </div>
